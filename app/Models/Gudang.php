@@ -10,7 +10,15 @@ class Gudang extends Model
     use HasFactory;
 
     protected $table = 'gudang';
-    protected $fillable = ['id_toko', 'id_produk'];
+
+    protected $fillable = [
+        'id_toko',
+        'id_produk',
+        'stock_gudang',
+        'lokasi_gudang',
+        'created_at',
+        'updated_at'
+    ];
 
     public function toko()
     {

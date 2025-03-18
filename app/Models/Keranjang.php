@@ -5,26 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Produk extends Model
+class Keranjang extends Model
 {
     use HasFactory;
 
-    protected $table = 'produk';
+    protected $table = 'keranjang';
 
     protected $fillable = [
-        'nama',
-        'id_kategori',
-        'harga',
-        'lokasi',
+        'id_gudang',
+        'jumlah',
+        'id_diagnosis',
         'id_toko',
-        'qr_code',
         'created_at',
         'updated_at'
     ];
 
-    public function kategori()
+    public function diagnosis()
     {
-        return $this->belongsTo(Kategori::class, 'id_kategori');
+        return $this->belongsTo(Diagnosis::class, 'id_diagnosis');
+    }
+
+    public function gudang()
+    {
+        return $this->belongsTo(Gudang::class, 'id_gudang');
     }
 
     public function toko()

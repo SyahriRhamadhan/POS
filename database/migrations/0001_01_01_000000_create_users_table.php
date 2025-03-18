@@ -11,12 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('toko', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->string('alamat');
+            $table->string('telepon')->nullable();
+            $table->enum('tipe', ['pusat', 'cabang'])->default('pusat');
+            $table->timestamps();
+        });
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('role', ['superadmin', 'admin'])->nullable();
+            $table->foreignId('id_toko')->nullable()->constrained('toko')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -45,5 +55,7 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('toko');
+        
     }
 };

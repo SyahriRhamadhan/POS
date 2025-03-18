@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('keranjang', function (Blueprint $table) {
+        Schema::create('gudang', function (Blueprint $table) {
             $table->id();
-            $table->integer('jumlah');
+            $table->foreignId('id_toko')->constrained('toko')->onDelete('cascade');
+            $table->foreignId('id_produk')->constrained('produk')->onDelete('cascade');
+            $table->integer('stock_gudang')->default(0);
+            $table->enum('lokasi_gudang', ['pusat', 'cabang'])->default('pusat');
             $table->timestamps();
         });
     }
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('keranjang');
+        Schema::dropIfExists('gudang');
     }
 };

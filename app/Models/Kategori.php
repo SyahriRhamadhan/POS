@@ -10,10 +10,10 @@ class Kategori extends Model
     use HasFactory;
 
     protected $table = 'kategori';
-    protected $fillable = ['name'];
 
-    public function produks()
-    {
-        return $this->hasMany(Produk::class, 'id_kategori');
-    }
+    protected $fillable = [
+        'name',
+        'created_at',
+        'updated_at'
+    ];
 }

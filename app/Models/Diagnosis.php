@@ -10,7 +10,13 @@ class Diagnosis extends Model
     use HasFactory;
 
     protected $table = 'diagnosis';
-    protected $fillable = ['harga_paket', 'penyakit_id'];
+
+    protected $fillable = [
+        'harga_paket',
+        'penyakit_id',
+        'created_at',
+        'updated_at'
+    ];
 
     public function penyakit()
     {

@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->foreignId('id_kategori')->constrained('kategori')->onDelete('cascade');
+            $table->bigInteger('harga');
+            $table->enum('lokasi', ['gudang', 'estalase'])->default('gudang');
+            $table->foreignId('id_toko')->nullable()->constrained('toko')->onDelete('cascade');
+            // $table->integer('stock');
+            $table->string('qr_code');
             $table->timestamps();
         });
     }
