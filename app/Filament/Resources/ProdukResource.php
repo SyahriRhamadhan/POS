@@ -20,6 +20,17 @@ class ProdukResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
     protected static ?string $navigationGroup = 'Manajemen Produk';
 
+    public static function getEloquentQuery(): Builder
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        if ($user->role === 'admin') {
+            return parent::getEloquentQuery()->where('id_toko', $user->id_toko);
+        }
+
+        return parent::getEloquentQuery();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

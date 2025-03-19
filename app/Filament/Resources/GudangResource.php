@@ -18,6 +18,18 @@ class GudangResource extends Resource
     protected static ?string $model = Gudang::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Manajemen Produk';
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        if ($user->role === 'admin') {
+            return parent::getEloquentQuery()->where('id_toko', $user->id_toko);
+        }
+
+        return parent::getEloquentQuery();
+    }
 
     public static function form(Form $form): Form
     {

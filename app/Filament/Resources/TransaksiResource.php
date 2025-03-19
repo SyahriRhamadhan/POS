@@ -11,15 +11,24 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TransaksiResource extends Resource
 {
     protected static ?string $model = Transaksi::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Penjualan';
 
+    public static function getEloquentQuery(): Builder
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        if ($user->role === 'admin') {
+            return parent::getEloquentQuery()->where('id_toko', $user->id_toko);
+        }
+
+        return parent::getEloquentQuery();
+    }
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -27,9 +36,10 @@ class TransaksiResource extends Resource
                 Forms\Components\Select::make('id_costumer')
                     ->relationship('costumer', 'name')
                     ->searchable()
-                    ->getOptionLabelUsing(fn($record) => "{$record->name} - {$record->alamat} - {$record->no_telp}") // ✅ Tampilkan lebih banyak informasi
+                    ->getOptionLabelUsing(fn($record) => "{$record->name} - {$record->alamat} - {$record->no_telp}")
                     ->required()
                     ->label('Pelanggan'),
+
                 Forms\Components\Select::make('id_discount')
                     ->relationship(
                         'discount',
@@ -38,18 +48,22 @@ class TransaksiResource extends Resource
                     )
                     ->required()
                     ->label('Diskon Aktif'),
+
                 Forms\Components\TextInput::make('id_keranjang')
                     ->required()
                     ->numeric(),
+
                 Forms\Components\Select::make('id_user')
                     ->relationship('user', 'name')
                     ->default(\Illuminate\Support\Facades\Auth::user()->id)
                     ->disabled()
                     ->required()
                     ->label('Admin Penjualan'),
-                Forms\Components\TextInput::make('id_toko')
+
+                Forms\Components\Select::make('id_toko')
+                    ->relationship('toko', 'nama')
                     ->required()
-                    ->numeric(),
+                    ->label('Toko'),
             ]);
     }
 
@@ -57,21 +71,21 @@ class TransaksiResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('costumer.name') 
+                Tables\Columns\TextColumn::make('costumer.name')
                     ->sortable()
                     ->searchable()
                     ->label('Pelanggan'),
 
-                Tables\Columns\TextColumn::make('discount.discount') 
+                Tables\Columns\TextColumn::make('discount.discount')
                     ->sortable()
                     ->searchable()
                     ->label('Diskon'),
 
-                Tables\Columns\TextColumn::make('keranjang.id') 
+                Tables\Columns\TextColumn::make('keranjang.id')
                     ->sortable()
                     ->label('ID Keranjang'),
 
-                Tables\Columns\TextColumn::make('user.name') 
+                Tables\Columns\TextColumn::make('user.name')
                     ->sortable()
                     ->searchable()
                     ->label('Admin Penjualan'),
@@ -91,9 +105,7 @@ class TransaksiResource extends Resource
                     ->sortable()
                     ->label('Diperbarui'),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -104,12 +116,9 @@ class TransaksiResource extends Resource
             ]);
     }
 
-
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

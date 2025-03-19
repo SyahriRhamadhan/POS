@@ -19,6 +19,42 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function canCreate(): bool
+    {
+        // Hanya Superadmin yang bisa menambahkan toko
+        return \Illuminate\Support\Facades\Auth::user()->role === 'superadmin';
+    }
+
+    public static function canDelete($record): bool
+    {
+        // Hanya Superadmin yang bisa menghapus toko
+        return \Illuminate\Support\Facades\Auth::user()->role === 'superadmin';
+    }
+
+    public static function canEdit($record): bool
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        // Superadmin bisa mengedit semua toko
+        if ($user->role === 'superadmin') {
+            return true;
+        }
+
+        // Admin hanya bisa mengedit toko mereka sendiri
+        return $record->id === $user->id_toko;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        if ($user->role === 'admin') {
+            return parent::getEloquentQuery()->where('id', $user->id_toko);
+        }
+
+        return parent::getEloquentQuery();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
